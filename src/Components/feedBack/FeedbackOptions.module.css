@@ -1,0 +1,15 @@
+.btnFeedback {
+  width: min-content;
+  background-color: white;
+  border-radius: 10%;
+  border: 1px solid black;
+}
+
+.btnFeedback:hover {
+  cursor: pointer;
+  background-color: black;
+  color: white;
+}
+.btnFeedback:not(:last-child) {
+  margin-right: 10px;
+}
