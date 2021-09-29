@@ -1,23 +1,25 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import FeedbackOptions from "../feedBack/FeedbackOptions";
+import Notification from "../notification/Notification";
 import Section from "../section/Section";
 import Statistics from "../statistics/Statistics";
+import styles from "./Main.module.css";
 
 class Main extends Component {
   state = { good: 0, neutral: 0, bad: 0 };
 
-  Increment = (e) => {
-    const name = e.currenttarget.name;
+  increment = (e) => {
+    const name = e.target.name;
     this.setState((prevStats) => ({
       [name]: prevStats[name] + 1,
     }));
   };
 
-  countTotalFeedback = () => {
-    const { good, neutral, bad } = this.state;
-    const total = good + neutral + bad;
-    return total;
-  };
+  countTotalFeedback = () =>
+    Object.values(this.state).reduce((acc, item) => (acc += item), 0);
+  // const { good, neutral, bad } = this.state;
+  // const total = good + neutral + bad;
+  // return total;
 
   countPositiveFeedbackPercentage = () => {
     const valueFeedback = this.countTotalFeedback();
@@ -29,28 +31,34 @@ class Main extends Component {
 
   render() {
     const { good, neutral, bad } = this.state;
-    const totalfeedback = this.countTotalFeedback();
-    const percentage = this.countPositiveFeedbackPercentage();
-    const addFeedback = this.Increment();
+    const totalfeedback = this.countTotalFeedback;
+    const percentage = this.countPositiveFeedbackPercentage;
+    const addIncrement = this.increment;
 
     return (
       <>
-        <Section title="Please leave feedback">
-          <FeedbackOptions
-            onLeaveFeedback={addFeedback}
-            options={[good, neutral, bad]}
-          />
-        </Section>
+        <div className={styles.container}>
+          <Section title="Please leave feedback">
+            <FeedbackOptions
+              onLeaveFeedback={addIncrement}
+              options={Object.keys(this.state)}
+            />
+          </Section>
 
-        <Section title="Statistics">
-          <Statistics
-            good={good}
-            neutral={neutral}
-            bad={bad}
-            total={totalfeedback}
-            positivePercentage={percentage}
-          />
-        </Section>
+          <Section title="Statistics">
+            {totalfeedback() ? (
+              <Statistics
+                good={good}
+                neutral={neutral}
+                bad={bad}
+                total={totalfeedback()}
+                positivePercentage={percentage()}
+              />
+            ) : (
+              <Notification massege="No feedback given" />
+            )}
+          </Section>
+        </div>
       </>
     );
   }
